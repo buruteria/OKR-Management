@@ -1,0 +1,40 @@
+[build]
+  # ビルドコマンド（静的ファイルなので不要）
+  command = "echo 'No build required'"
+  
+  # 公開ディレクトリ
+  publish = "src"
+
+[build.environment]
+  # Node.jsバージョン指定（必要に応じて）
+  NODE_VERSION = "18"
+
+# リダイレクト設定（SPAの場合）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ヘッダー設定（セキュリティとキャッシュ）
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
