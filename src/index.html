@@ -397,6 +397,305 @@
             margin-bottom: 20px;
         }
         
+        .ai-dialogue-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ai-dialogue-header {
+            margin-bottom: 20px;
+        }
+        
+        .ai-dialogue-header h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .ai-dialogue-header p {
+            color: #7f8c8d;
+        }
+        
+        .conversation-area {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #fafbfc;
+        }
+        
+        .ai-message, .user-message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .ai-message {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+        }
+        
+        .user-message {
+            background: #f0f9ff;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .message-content {
+            line-height: 1.6;
+        }
+        
+        .input-area {
+            margin-bottom: 20px;
+        }
+        
+        .input-area textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .input-area textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .input-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .send-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .send-btn:hover {
+            background: #2980b9;
+        }
+        
+        .secondary-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .secondary-btn:hover {
+            background: #d5dbdb;
+        }
+        
+        .extraction-result {
+            background: #f8f9fa;
+            border: 2px solid #27ae60;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .extraction-result h4 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        
+        .extracted-okr {
+            margin-bottom: 20px;
+        }
+        
+        .north-star {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .north-star h5 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        
+        .objectives {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .objectives h5 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        .objective-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .key-results {
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+        
+        .kr-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .kr-item:last-child {
+            border-bottom: none;
+        }
+        
+        .kr-metrics {
+            font-weight: 500;
+            color: #3498db;
+        }
+        
+        .apply-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .apply-btn:hover {
+            background: #219a52;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-overlay .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 0;
+        }
+        
+        .modal-overlay .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-overlay .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-overlay .modal-body textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .primary-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .primary-btn:hover {
+            background: #2980b9;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        .notification.success {
+            background: #27ae60;
+        }
+        
+        .notification.error {
+            background: #e74c3c;
+        }
+        
+        .notification.warning {
+            background: #f39c12;
+        }
+        
+        .notification.info {
+            background: #3498db;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
         .chat-message {
             display: flex;
             gap: 15px;
@@ -598,9 +897,13 @@
                 <span>📊</span>
                 <span>ダッシュボード</span>
             </div>
+            <div class="nav-item" onclick="showSection('ai-assist')">
+                <span>🤖</span>
+                <span>AI OKR設定</span>
+            </div>
             <div class="nav-item" onclick="showSection('okr-setup')">
                 <span>⚙️</span>
-                <span>OKR設定</span>
+                <span>手動OKR設定</span>
             </div>
             <div class="nav-item" onclick="showSection('review')">
                 <span>📈</span>
@@ -735,6 +1038,41 @@
                     </div>
                     <div id="progressHistory">
                         <!-- 進捗履歴を表示 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI OKR設定セクション -->
+            <div id="ai-assist" class="section">
+                <div class="review-section">
+                    <div class="review-header">
+                        <span>🤖</span>
+                        <span>AI アシスト型OKR設定</span>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="action-button" id="start-ai-dialogue">
+                            <div class="action-icon">💬</div>
+                            <div class="action-label">AI対話でOKR作成</div>
+                        </div>
+                        <div class="action-button" id="analyze-external-log">
+                            <div class="action-icon">📄</div>
+                            <div class="action-label">外部ログ解析</div>
+                        </div>
+                        <div class="action-button" onclick="showManualOKRGuide()">
+                            <div class="action-icon">📝</div>
+                            <div class="action-label">手動設定ガイド</div>
+                        </div>
+                    </div>
+                    
+                    <div id="ai-dialogue-container">
+                        <div class="ai-dialogue-section" style="text-align: center; padding: 40px;">
+                            <h3>🎯 AIアシスタントでOKRを簡単作成</h3>
+                            <p style="margin: 20px 0; color: #7f8c8d;">
+                                自然な言葉で目標や現状を話すだけで、AIが最適なOKRを提案します。<br>
+                                「AI対話でOKR作成」ボタンをクリックして始めましょう！
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -885,6 +1223,17 @@
     </div>
     
     <script src="./js/settings.js"></script>
+    <script src="./js/api-service.js"></script>
+    <script src="./js/ai-assistant.js"></script>
     <script src="script.js"></script>
+    
+    <script>
+        // AI Assistant の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.aiAssistant && window.apiService) {
+                window.aiAssistant.init(window.apiService);
+            }
+        });
+    </script>
 </body>
 </html> 
