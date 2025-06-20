@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKR Management Tool - Google Sheets セットアップ</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step h3 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #3182ce;
+        }
+        .button.success {
+            background: #48bb78;
+        }
+        .button.success:hover {
+            background: #38a169;
+        }
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+        }
+        .alert {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .success-alert {
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            color: #2f855a;
+        }
+        .copy-btn {
+            float: right;
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #2d3748;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 OKR Management Tool<br>Google Sheets セットアップ</h1>
+        
+        <div class="step">
+            <h3>📊 Step 1: テンプレートスプレッドシートを作成</h3>
+            <p>下のボタンをクリックして、OKR管理用のGoogleスプレッドシートテンプレートを作成します。</p>
+            <button class="button" onclick="createTemplate()">📊 スプレッドシートテンプレートを作成</button>
+            <div id="sheet-info" style="display: none;">
+                <div class="success-alert">
+                    <strong>✅ スプレッドシート作成完了！</strong><br>
+                    スプレッドシートID: <span id="spreadsheet-id"></span><br>
+                    <a id="spreadsheet-link" href="#" target="_blank">📊 スプレッドシートを開く</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>⚡ Step 2: Apps Script プロジェクトを作成</h3>
+            <p>作成されたスプレッドシートで以下の手順を実行してください：</p>
+            <ol>
+                <li>スプレッドシートで「拡張機能」→「Apps Script」をクリック</li>
+                <li>既存のコードを削除し、下のコードをコピー＆ペースト</li>
+                <li>「保存」ボタンをクリック</li>
+            </ol>
+            
+            <div style="position: relative;">
+                <button class="copy-btn" onclick="copyCode('apps-script-code')">📋 コピー</button>
+                <div class="code-block" id="apps-script-code">/**
+ * OKR Management Tool - Google Apps Script Backend
+ * Google Sheets API統合用のバックエンドスクリプト
+ */
+
+// 設定
+const CONFIG = {
+  SPREADSHEET_ID: SpreadsheetApp.getActiveSpreadsheet().getId(),
+  SHEETS: {
+    OKR_DATA: 'OKR_Data',
+    PROGRESS: 'Progress_History',
+    WEEKLY_REVIEW: 'Weekly_Reviews'
+  }
+};
+
+/**
+ * 初期セットアップ関数
+ */
+function setupOKRManagement() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // 必要なシートを作成
+  setupOKRDataSheet(ss);
+  setupProgressSheet(ss);
+  setupWeeklyReviewSheet(ss);
+  
+  Logger.log('OKR Management setup completed!');
+  
+  return {
+    spreadsheetId: ss.getId(),
+    spreadsheetUrl: ss.getUrl(),
+    message: 'セットアップが完了しました'
+  };
+}
+
+/**
+ * Web App のエントリーポイント
+ */
+function doPost(e) {
+  try {
+    const requestData = JSON.parse(e.postData.contents);
+    const action = requestData.action;
+    
+    switch (action) {
+      case 'sync_okr_data':
+        return syncOKRData(requestData.data);
+      case 'get_okr_data':
+        return getOKRData();
+      case 'save_progress':
+        return saveProgress(requestData.data);
+      case 'get_progress_history':
+        return getProgressHistory();
+      default:
+        throw new Error('Invalid action: ' + action);
+    }
+  } catch (error) {
+    Logger.log('Error in doPost: ' + error.toString());
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: false,
+        error: error.toString()
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * OKRデータの同期
+ */
+function syncOKRData(data) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(CONFIG.SHEETS.OKR_DATA);
+    
+    if (!sheet) {
+      sheet = setupOKRDataSheet(ss);
+    }
+    
+    const timestamp = new Date();
+    const row = [
+      timestamp,
+      data.northStar || '',
+      JSON.stringify(data.objectives || []),
+      JSON.stringify(data.keyResults || []),
+      JSON.stringify(data.progressHistory || []),
+      JSON.stringify(data.adjustmentHistory || []),
+      JSON.stringify(data.weeklyReviews || [])
+    ];
+    
+    const lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
+    } else {
+      sheet.appendRow(row);
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        message: 'OKRデータが正常に同期されました',
+        timestamp: timestamp.toISOString()
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in syncOKRData: ' + error.toString());
+    throw error;
+  }
+}
+
+/**
+ * OKRデータの取得
+ */
+function getOKRData() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(CONFIG.SHEETS.OKR_DATA);
+    
+    if (!sheet || sheet.getLastRow() <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true,
+          data: {},
+          message: 'データが見つかりません'
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const lastRow = sheet.getLastRow();
+    const data = sheet.getRange(lastRow, 1, 1, 7).getValues()[0];
+    
+    const okrData = {
+      timestamp: data[0],
+      northStar: data[1],
+      objectives: JSON.parse(data[2] || '[]'),
+      keyResults: JSON.parse(data[3] || '[]'),
+      progressHistory: JSON.parse(data[4] || '[]'),
+      adjustmentHistory: JSON.parse(data[5] || '[]'),
+      weeklyReviews: JSON.parse(data[6] || '[]')
+    };
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        data: okrData
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in getOKRData: ' + error.toString());
+    throw error;
+  }
+}
+
+/**
+ * 進捗データの保存
+ */
+function saveProgress(progressData) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(CONFIG.SHEETS.PROGRESS);
+    
+    if (!sheet) {
+      sheet = setupProgressSheet(ss);
+    }
+    
+    const row = [
+      new Date(progressData.date),
+      progressData.activity || '',
+      progressData.result || '',
+      JSON.stringify(progressData.relatedKRs || []),
+      progressData.mood || '😐'
+    ];
+    
+    sheet.appendRow(row);
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        message: '進捗データが保存されました'
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in saveProgress: ' + error.toString());
+    throw error;
+  }
+}
+
+/**
+ * 進捗履歴の取得
+ */
+function getProgressHistory(limit = 30) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(CONFIG.SHEETS.PROGRESS);
+    
+    if (!sheet || sheet.getLastRow() <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true,
+          data: [],
+          message: '進捗データが見つかりません'
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const lastRow = sheet.getLastRow();
+    const startRow = Math.max(2, lastRow - limit + 1);
+    const numRows = lastRow - startRow + 1;
+    
+    const data = sheet.getRange(startRow, 1, numRows, 5).getValues();
+    
+    const progressHistory = data.map(row => ({
+      date: row[0].toISOString(),
+      activity: row[1],
+      result: row[2],
+      relatedKRs: JSON.parse(row[3] || '[]'),
+      mood: row[4]
+    })).reverse();
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        data: progressHistory
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in getProgressHistory: ' + error.toString());
+    throw error;
+  }
+}
+
+/**
+ * OKRデータシートのセットアップ
+ */
+function setupOKRDataSheet(ss) {
+  let sheet = ss.getSheetByName(CONFIG.SHEETS.OKR_DATA);
+  
+  if (sheet) {
+    ss.deleteSheet(sheet);
+  }
+  
+  sheet = ss.insertSheet(CONFIG.SHEETS.OKR_DATA);
+  
+  const headers = [
+    'Timestamp',
+    'North Star',
+    'Objectives',
+    'Key Results',
+    'Progress History',
+    'Adjustment History',
+    'Weekly Reviews'
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+  sheet.getRange(1, 1, 1, headers.length).setBackground('#4299e1');
+  sheet.getRange(1, 1, 1, headers.length).setFontColor('white');
+  sheet.setFrozenRows(1);
+  
+  // サンプルデータを追加
+  const sampleData = [
+    new Date(),
+    '編集者×海外商社モデルを確立し、日本の専門知・文化を海外展開する事業で月50万円を達成している',
+    JSON.stringify([{
+      id: 1,
+      text: 'ポートフォリオ公開を起点に、海外展開可能な事業の種を見つけ、収益化の初期検証を完了する',
+      status: 'active'
+    }]),
+    JSON.stringify([
+      {
+        id: 1,
+        objectiveId: 1,
+        text: '6月30日までにポートフォリオサイトを公開し、7月中に新規問い合わせを5件獲得する',
+        current: 3,
+        target: 5,
+        unit: '件'
+      },
+      {
+        id: 2,
+        objectiveId: 1,
+        text: 'note記事3本を公開し、合計200いいね以上獲得する',
+        current: 120,
+        target: 200,
+        unit: 'いいね'
+      },
+      {
+        id: 3,
+        objectiveId: 1,
+        text: '海外展開に関心のある起業家・専門家と3名以上対話し、事業仮説を3つ立案する',
+        current: 2,
+        target: 3,
+        unit: '名'
+      }
+    ]),
+    '[]',
+    '[]',
+    '[]'
+  ];
+  
+  sheet.appendRow(sampleData);
+  
+  return sheet;
+}
+
+/**
+ * 進捗シートのセットアップ
+ */
+function setupProgressSheet(ss) {
+  let sheet = ss.getSheetByName(CONFIG.SHEETS.PROGRESS);
+  
+  if (sheet) {
+    ss.deleteSheet(sheet);
+  }
+  
+  sheet = ss.insertSheet(CONFIG.SHEETS.PROGRESS);
+  
+  const headers = [
+    'Date',
+    'Activity',
+    'Result',
+    'Related KRs',
+    'Mood'
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+  sheet.getRange(1, 1, 1, headers.length).setBackground('#48bb78');
+  sheet.getRange(1, 1, 1, headers.length).setFontColor('white');
+  sheet.setFrozenRows(1);
+  
+  // サンプルデータを追加
+  const today = new Date();
+  const sampleData = [
+    [
+      new Date(today.getTime() - 86400000), // 昨日
+      'ポートフォリオサイトのデザイン検討',
+      '参考サイトを5つピックアップし、デザインの方向性を決定',
+      JSON.stringify([1]),
+      '😊'
+    ],
+    [
+      today,
+      'note記事の執筆',
+      '「海外展開の可能性」について2000文字の記事を完成',
+      JSON.stringify([2]),
+      '😄'
+    ]
+  ];
+  
+  sampleData.forEach(row => sheet.appendRow(row));
+  
+  return sheet;
+}
+
+/**
+ * 週次レビューシートのセットアップ
+ */
+function setupWeeklyReviewSheet(ss) {
+  let sheet = ss.getSheetByName(CONFIG.SHEETS.WEEKLY_REVIEW);
+  
+  if (sheet) {
+    ss.deleteSheet(sheet);
+  }
+  
+  sheet = ss.insertSheet(CONFIG.SHEETS.WEEKLY_REVIEW);
+  
+  const headers = [
+    'Week Ending',
+    'Achievements',
+    'Challenges',
+    'Next Week Focus',
+    'Mood Rating',
+    'Notes'
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+  sheet.getRange(1, 1, 1, headers.length).setBackground('#ed8936');
+  sheet.getRange(1, 1, 1, headers.length).setFontColor('white');
+  sheet.setFrozenRows(1);
+  
+  return sheet;
+}</div>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Step 3: Web App として公開</h3>
+            <ol>
+                <li>Apps Scriptエディタで「デプロイ」→「新しいデプロイ」をクリック</li>
+                <li>種類を「ウェブアプリ」に選択</li>
+                <li>実行者: 自分</li>
+                <li>アクセス: 全員</li>
+                <li>「デプロイ」をクリック</li>
+                <li>表示されたWeb App URLをコピー</li>
+            </ol>
+            
+            <div class="alert">
+                <strong>⚠️ 重要:</strong> デプロイ後に表示されるWeb App URLを必ずコピーしてください。
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>⚙️ Step 4: OKRツールで設定</h3>
+            <ol>
+                <li>OKR管理ツールを開く</li>
+                <li>「⚙️ 設定」→「API設定」タブを選択</li>
+                <li>「Spreadsheet ID」に作成したスプレッドシートのIDを入力</li>
+                <li>「Web App URL」にデプロイしたURLを入力</li>
+                <li>「設定を保存」をクリック</li>
+            </ol>
+            
+            <button class="button success" onclick="openOKRTool()">🎯 OKRツールを開く</button>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function createTemplate() {
+            const templateUrl = 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/copy';
+            
+            // テンプレートのコピーを作成
+            window.open(templateUrl + '?title=OKR Management Tool - Data', '_blank');
+            
+            // UI更新
+            document.getElementById('sheet-info').style.display = 'block';
+            showStatus('📊 スプレッドシートテンプレートを開いています...', 'info');
+            
+            setTimeout(() => {
+                showStatus('✅ 新しいタブでスプレッドシートが開かれました。Step 2に進んでください。', 'success');
+            }, 2000);
+        }
+
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('📋 コードがクリップボードにコピーされました！', 'success');
+            }).catch(() => {
+                // フォールバック
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showStatus('📋 コードがクリップボードにコピーされました！', 'success');
+            });
+        }
+
+        function openOKRTool() {
+            window.open('../src/index.html', '_blank');
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.textContent = message;
+            
+            status.className = '';
+            if (type === 'success') {
+                status.className = 'success-alert';
+            } else if (type === 'error') {
+                status.className = 'alert';
+            } else {
+                status.style.background = '#bee3f8';
+                status.style.border = '1px solid #90cdf4';
+                status.style.color = '#2c5282';
+            }
+        }
+    </script>
+</body>
+</html>
