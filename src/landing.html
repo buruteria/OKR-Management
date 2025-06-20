@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 OKR忘却防止ツール - 個人事業主向け</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .feature h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: white;
+            color: #667eea;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .tech-stack {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎯</div>
+        <h1>OKR忘却防止ツール</h1>
+        <p class="subtitle">個人事業主向け - エフェクチュエーション × OKR</p>
+        
+        <div class="description">
+            <p><strong>従来のタスク管理ツールとは違う</strong>、目標忘却を防ぐ革新的なシステム</p>
+            <p>個人事業主の「OKRを設定したけど日々忘れてしまう」問題を、AI対話とエフェクチュエーション理論で解決します。</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🤖 AI対話型設定</h3>
+                <p>AIコーチがステップバイステップでOKR設定をサポート。「もっともらしい努力」を排除して成果にフォーカス。</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📊 デイリーダッシュボード</h3>
+                <p>毎日のフォーカスタスクとKRの関連性を可視化。時間別挨拶とNorth Star表示でモチベーション維持。</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🔄 エフェクチュエーション対応</h3>
+                <p>想定外の機会や状況変化に柔軟対応。計画と偶然の両方を活かす軌道修正システム。</p>
+            </div>
+            
+            <div class="feature">
+                <h3>💡 AIプロンプト生成</h3>
+                <p>Claude/ChatGPT用の最適化プロンプトを自動生成。日次優先順位、週次振り返り、KR改善提案。</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📈 フリクションレス記録</h3>
+                <p>感情アイコンによる簡単な気分記録。長文不要で最小限の入力で継続可能な進捗管理。</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🔔 忘却防止システム</h3>
+                <p>デスクトップ通知、週次リマインダー、視覚的プログレスバーで目標を忘れさせない。</p>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <a href="Stock/programs/個人OKR管理ツール/development/index.html" class="btn">🚀 ツールを開始</a>
+            <a href="Stock/programs/個人OKR管理ツール/README.md" class="btn secondary">📖 詳細を見る</a>
+        </div>
+        
+        <div class="tech-stack">
+            <p><strong>技術仕様:</strong> Vanilla JavaScript | ローカルストレージ | レスポンシブ対応 | プライバシー重視</p>
+            <p><strong>対象:</strong> 個人事業主・起業家・ADHD特性配慮・完璧主義改善</p>
+            <p><strong>特徴:</strong> サーバー不要 | オフライン動作 | データ完全ローカル管理</p>
+        </div>
+    </div>
+</body>
+</html> 

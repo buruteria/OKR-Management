@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 OKR忘却防止ツール - 個人事業主向け</title>
+    <title>OKR忘却防止ツール - 個人事業主向け</title>
     <style>
         * {
             margin: 0;
@@ -13,182 +13,859 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #f0f2f5;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            color: #1a1a1a;
         }
         
-        .container {
-            max-width: 800px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* サイドバー */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
         }
         
         .logo {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
+            font-size: 24px;
+            font-weight: bold;
             margin-bottom: 30px;
-            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .description {
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            text-align: left;
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-item:hover {
             background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item.active {
+            background: #3498db;
+        }
+        
+        /* メインコンテンツ */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
             padding: 20px;
-            border-radius: 10px;
         }
         
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-            text-align: left;
+        .section {
+            display: none;
         }
         
-        .feature {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
+        .section.active {
+            display: block;
         }
         
-        .feature h3 {
-            font-size: 1.2rem;
+        /* デイリーダッシュボード */
+        .dashboard-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .today-date {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
             margin-bottom: 10px;
         }
         
-        .feature p {
-            font-size: 0.95rem;
-            opacity: 0.9;
+        .greeting {
+            color: #7f8c8d;
+            font-size: 16px;
         }
         
-        .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            background: white;
-            color: #667eea;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn.secondary {
-            background: transparent;
+        /* North Star表示 */
+        .north-star-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: 2px solid white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
         }
         
-        .tech-stack {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            opacity: 0.8;
+        .north-star-card::before {
+            content: '⭐';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            opacity: 0.2;
         }
         
+        .north-star-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .north-star-text {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+        
+        /* OKRカード */
+        .okr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .okr-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .okr-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .okr-type {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .okr-objective {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .kr-list {
+            margin-top: 15px;
+        }
+        
+        .kr-item {
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .kr-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #27ae60;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            min-width: 40px;
+        }
+        
+        /* 今日のフォーカス */
+        .today-focus {
+            background: #fff4e6;
+            border: 2px solid #ff9800;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .focus-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e65100;
+        }
+        
+        .focus-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .focus-task {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .focus-task:hover {
+            transform: translateX(5px);
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .task-checkbox.checked {
+            background: #27ae60;
+            border-color: #27ae60;
+            position: relative;
+        }
+        
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .task-kr {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* クイックアクション */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .action-button {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .action-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* モーダル共通スタイル */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 50px auto;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        /* AI対話UI */
+        .ai-chat {
+            margin-bottom: 20px;
+        }
+        
+        .chat-message {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            animation: messageSlide 0.3s ease;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .chat-bubble {
+            background: #f0f2f5;
+            padding: 15px 20px;
+            border-radius: 12px;
+            flex: 1;
+            line-height: 1.6;
+        }
+        
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-button {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-button:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        /* フォーム要素 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* ボタン */
+        .button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .button-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .button-primary:hover {
+            background: #2980b9;
+        }
+        
+        .button-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        
+        .button-secondary:hover {
+            background: #d5dbdb;
+        }
+        
+        /* レビューセクション */
+        .review-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .review-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .review-metric {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .review-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* レスポンシブ */
         @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .buttons {
+            .app-container {
                 flex-direction: column;
-                align-items: center;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .okr-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .review-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🎯</div>
-        <h1>OKR忘却防止ツール</h1>
-        <p class="subtitle">個人事業主向け - エフェクチュエーション × OKR</p>
-        
-        <div class="description">
-            <p><strong>従来のタスク管理ツールとは違う</strong>、目標忘却を防ぐ革新的なシステム</p>
-            <p>個人事業主の「OKRを設定したけど日々忘れてしまう」問題を、AI対話とエフェクチュエーション理論で解決します。</p>
-        </div>
-        
-        <div class="features">
-            <div class="feature">
-                <h3>🤖 AI対話型設定</h3>
-                <p>AIコーチがステップバイステップでOKR設定をサポート。「もっともらしい努力」を排除して成果にフォーカス。</p>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <div class="sidebar">
+            <div class="logo">
+                <span>🎯</span>
+                <span>OKR Manager</span>
             </div>
-            
-            <div class="feature">
-                <h3>📊 デイリーダッシュボード</h3>
-                <p>毎日のフォーカスタスクとKRの関連性を可視化。時間別挨拶とNorth Star表示でモチベーション維持。</p>
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span>📊</span>
+                <span>ダッシュボード</span>
             </div>
-            
-            <div class="feature">
-                <h3>🔄 エフェクチュエーション対応</h3>
-                <p>想定外の機会や状況変化に柔軟対応。計画と偶然の両方を活かす軌道修正システム。</p>
+            <div class="nav-item" onclick="showSection('okr-setup')">
+                <span>⚙️</span>
+                <span>OKR設定</span>
             </div>
-            
-            <div class="feature">
-                <h3>💡 AIプロンプト生成</h3>
-                <p>Claude/ChatGPT用の最適化プロンプトを自動生成。日次優先順位、週次振り返り、KR改善提案。</p>
+            <div class="nav-item" onclick="showSection('review')">
+                <span>📈</span>
+                <span>週次レビュー</span>
             </div>
-            
-            <div class="feature">
-                <h3>📈 フリクションレス記録</h3>
-                <p>感情アイコンによる簡単な気分記録。長文不要で最小限の入力で継続可能な進捗管理。</p>
+            <div class="nav-item" onclick="showSection('progress')">
+                <span>📝</span>
+                <span>進捗記録</span>
             </div>
-            
-            <div class="feature">
-                <h3>🔔 忘却防止システム</h3>
-                <p>デスクトップ通知、週次リマインダー、視覚的プログレスバーで目標を忘れさせない。</p>
+            <div class="nav-item" onclick="showSection('coaching')">
+                <span>🤖</span>
+                <span>AIコーチング</span>
             </div>
         </div>
         
-        <div class="buttons">
-            <a href="Stock/programs/個人OKR管理ツール/development/index.html" class="btn">🚀 ツールを開始</a>
-            <a href="Stock/programs/個人OKR管理ツール/README.md" class="btn secondary">📖 詳細を見る</a>
-        </div>
-        
-        <div class="tech-stack">
-            <p><strong>技術仕様:</strong> Vanilla JavaScript | ローカルストレージ | レスポンシブ対応 | プライバシー重視</p>
-            <p><strong>対象:</strong> 個人事業主・起業家・ADHD特性配慮・完璧主義改善</p>
-            <p><strong>特徴:</strong> サーバー不要 | オフライン動作 | データ完全ローカル管理</p>
+        <!-- メインコンテンツ -->
+        <div class="main-content">
+            <!-- ダッシュボード -->
+            <div id="dashboard" class="section active">
+                <!-- ヘッダー -->
+                <div class="dashboard-header">
+                    <div class="today-date" id="todayDate">2025年6月14日（金）</div>
+                    <div class="greeting" id="greeting">おはようございます！今日も目標に向かって進みましょう</div>
+                </div>
+                
+                <!-- North Star -->
+                <div class="north-star-card">
+                    <div class="north-star-label">North Star - 1年後のビジョン</div>
+                    <div class="north-star-text" id="northStarText">
+                        まだ設定されていません。OKR設定から始めましょう。
+                    </div>
+                </div>
+                
+                <!-- 今日のフォーカス -->
+                <div class="today-focus">
+                    <div class="focus-header">
+                        <span>🎯</span>
+                        <span>今日のフォーカス</span>
+                    </div>
+                    <div class="focus-tasks" id="focusTasks">
+                        <!-- 動的に生成 -->
+                    </div>
+                </div>
+                
+                <!-- クイックアクション -->
+                <div class="quick-actions">
+                    <div class="action-button" onclick="openProgressModal()">
+                        <div class="action-icon">✅</div>
+                        <div class="action-label">進捗を記録</div>
+                    </div>
+                    <div class="action-button" onclick="openAdjustModal()">
+                        <div class="action-icon">🔄</div>
+                        <div class="action-label">KR調整</div>
+                    </div>
+                    <div class="action-button" onclick="generateDailyPrompt()">
+                        <div class="action-icon">💡</div>
+                        <div class="action-label">今日の指針</div>
+                    </div>
+                </div>
+                
+                <!-- 現在のOKR -->
+                <div class="okr-grid" id="okrGrid">
+                    <!-- 動的に生成 -->
+                </div>
+            </div>
+            
+            <!-- OKR設定セクション -->
+            <div id="okr-setup" class="section">
+                <div class="review-section">
+                    <div class="review-header">
+                        <span>🎯</span>
+                        <span>OKR設定・変更</span>
+                    </div>
+                    <p style="margin-bottom: 20px;">個人事業主のあなたに最適化されたOKR設定ウィザードです。AI対話を通じて、効果的な目標設定をサポートします。</p>
+                    <button class="button button-primary" onclick="openSetupModal()">
+                        新規OKRを設定
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 週次レビューセクション -->
+            <div id="review" class="section">
+                <div class="review-section">
+                    <div class="review-header">
+                        <span>📊</span>
+                        <span>週次レビュー</span>
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-card">
+                            <div class="review-metric" id="weeklyProgress">0%</div>
+                            <div class="review-label">今週の平均進捗</div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-metric" id="completedTasks">0</div>
+                            <div class="review-label">完了したタスク</div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-metric" id="adjustmentCount">0</div>
+                            <div class="review-label">KR調整回数</div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-metric" id="focusRate">0%</div>
+                            <div class="review-label">フォーカス達成率</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px;">振り返りと来週の計画</h3>
+                        <div class="form-group">
+                            <label class="form-label">今週の振り返り</label>
+                            <textarea class="form-textarea" placeholder="今週の成果と学びを記録してください"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">来週の重点事項</label>
+                            <textarea class="form-textarea" placeholder="来週フォーカスすべきことを記録してください"></textarea>
+                        </div>
+                        <button class="button button-primary">振り返りを保存</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 進捗記録セクション -->
+            <div id="progress" class="section">
+                <div class="review-section">
+                    <div class="review-header">
+                        <span>📈</span>
+                        <span>進捗記録</span>
+                    </div>
+                    <div id="progressHistory">
+                        <!-- 進捗履歴を表示 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AIコーチングセクション -->
+            <div id="coaching" class="section">
+                <div class="review-section">
+                    <div class="review-header">
+                        <span>🤖</span>
+                        <span>AIコーチング</span>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="action-button" onclick="generateDailyPrompt()">
+                            <div class="action-icon">🎯</div>
+                            <div class="action-label">今日の優先順位</div>
+                        </div>
+                        <div class="action-button" onclick="generateWeeklyPrompt()">
+                            <div class="action-icon">📊</div>
+                            <div class="action-label">週次振り返り</div>
+                        </div>
+                        <div class="action-button" onclick="generateImprovementPrompt()">
+                            <div class="action-icon">🔍</div>
+                            <div class="action-label">KR改善提案</div>
+                        </div>
+                    </div>
+                    
+                    <div id="generated-prompt" style="display: none;">
+                        <h3>📋 生成されたプロンプト</h3>
+                        <textarea id="prompt-text" rows="15" readonly style="width: 100%; margin: 10px 0; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                        <button class="button button-secondary" onclick="copyPrompt()">📋 コピー</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- OKR設定モーダル -->
+    <div id="setupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">OKR設定ウィザード</h2>
+                <button class="close-button" onclick="closeModal('setupModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-chat">
+                    <div class="chat-message">
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">
+                            OKRの設定をお手伝いします。まず、あなたの長期的なビジョン（North Star）から始めましょう。<br>
+                            3ヶ月後、あなたがクライアントや周りの人から『〇〇さんってこういう人だよね』と言われたい、理想の姿は何ですか？
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">North Star（1年後の理想的な状態）</label>
+                    <textarea class="form-textarea" id="northStarInput" placeholder="例：編集者×海外商社モデルを確立し、日本の専門知・文化を海外展開する事業で月50万円を達成している"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">四半期の目標（Objective）</label>
+                    <textarea class="form-textarea" id="objectiveInput" placeholder="例：ポートフォリオ公開を起点に、海外展開可能な事業の種を見つけ、収益化の初期検証を完了する"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">今月のKey Results（測定可能な成果）</label>
+                    <input type="text" class="form-input" id="kr1Input" placeholder="KR1: 6月30日までにポートフォリオサイトを公開し、7月中に新規問い合わせを5件獲得する" style="margin-bottom: 10px;">
+                    <input type="text" class="form-input" id="kr2Input" placeholder="KR2: note記事3本を公開し、合計200いいね以上獲得する" style="margin-bottom: 10px;">
+                    <input type="text" class="form-input" id="kr3Input" placeholder="KR3: 海外展開に関心のある起業家・専門家と3名以上対話し、事業仮説を3つ立案する">
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="button button-secondary" onclick="closeModal('setupModal')">キャンセル</button>
+                    <button class="button button-primary" onclick="saveOKR()">OKRを保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- KR調整モーダル -->
+    <div id="adjustModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">KR調整 - AI対話</h2>
+                <button class="close-button" onclick="closeModal('adjustModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-chat">
+                    <div class="chat-message">
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">
+                            KRの調整を検討されているのですね。エフェクチュエーション的なアプローチで、柔軟に調整していきましょう。どのような理由で変更を考えていますか？
+                            <div class="chat-options">
+                                <button class="option-button" onclick="selectAdjustReason('too-easy')">目標が簡単すぎる</button>
+                                <button class="option-button" onclick="selectAdjustReason('too-hard')">目標が難しすぎる</button>
+                                <button class="option-button" onclick="selectAdjustReason('priority-change')">優先順位が変わった</button>
+                                <button class="option-button" onclick="selectAdjustReason('new-opportunity')">新しい機会が生まれた</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="adjustmentChat">
+                        <!-- 動的に対話が追加される -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 進捗記録モーダル -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">フリクションレス進捗記録</h2>
+                <button class="close-button" onclick="closeModal('progressModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">今日の活動</label>
+                    <textarea class="form-textarea" id="activityInput" placeholder="今日行った活動を簡潔に記録してください"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">どのKRに貢献しましたか？</label>
+                    <div id="krCheckboxes">
+                        <!-- 動的に生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">具体的な成果・気づき</label>
+                    <input type="text" class="form-input" id="resultInput" placeholder="例：ポートフォリオのProject機能を修正完了、About文章の骨子を作成">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">今日の気分</label>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <button class="option-button" onclick="selectMood('😊')">😊 Good</button>
+                        <button class="option-button" onclick="selectMood('😐')">😐 Normal</button>
+                        <button class="option-button" onclick="selectMood('😞')">😞 Tough</button>
+                    </div>
+                </div>
+                
+                <button class="button button-primary" onclick="saveProgress()">進捗を保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html> 
