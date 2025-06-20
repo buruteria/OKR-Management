@@ -200,25 +200,17 @@ function loadOKRData() {
 
 // ダッシュボードの更新
 function updateDashboard() {
-    const now = new Date();
-    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    document.getElementById('todayDate').textContent = now.toLocaleDateString('ja-JP', options);
-    
-    const hour = now.getHours();
-    let greeting = '';
-    if (hour < 12) greeting = 'おはようございます！今日も目標に向かって進みましょう';
-    else if (hour < 18) greeting = 'こんにちは！午後も生産的な時間を過ごしましょう';
-    else greeting = 'お疲れさまです！今日の進捗を振り返りましょう';
-    
-    document.getElementById('greeting').textContent = greeting;
-    
     // North Star表示
-    if (okrData.northStar) {
-        document.getElementById('northStarText').textContent = okrData.northStar;
+    const northStarDisplay = document.getElementById('northStarDisplay');
+    if (northStarDisplay && okrData.northStar) {
+        northStarDisplay.textContent = okrData.northStar;
     }
     
     // OKR表示
     displayOKRCards();
+    
+    // 統計データ更新
+    updateDashboardStats();
     
     // 今日のフォーカス表示
     displayTodaysFocus();
@@ -227,39 +219,49 @@ function updateDashboard() {
 // OKRカードの表示
 function displayOKRCards() {
     const grid = document.getElementById('okrGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
     
     if (okrData.objectives.length === 0) {
         grid.innerHTML = `
-            <div class="okr-card">
-                <div class="okr-type">お知らせ</div>
-                <div class="okr-objective">OKRがまだ設定されていません</div>
-                <p style="margin-top: 15px; color: #7f8c8d;">「OKR設定」から始めて、目標忘却を防止しましょう。</p>
+            <div class="content-card" style="text-align: center; padding: var(--space-12);">
+                <h3 style="color: var(--color-gray-600); margin-bottom: var(--space-4);">OKRが設定されていません</h3>
+                <p style="color: var(--color-gray-500); margin-bottom: var(--space-6);">
+                    AI OKR設定または手動設定でOKRを作成しましょう
+                </p>
+                <button class="btn btn-primary" onclick="document.querySelector('[data-section=\"ai-assist\"]').click()">
+                    AI OKR設定を開始
+                </button>
             </div>
         `;
         return;
     }
     
     okrData.objectives.forEach((obj, index) => {
-        const card = document.createElement('div');
-        card.className = 'okr-card';
-        
         const krs = okrData.keyResults.filter(kr => kr.objectiveId === obj.id);
+        const avgProgress = krs.length > 0 
+            ? krs.reduce((sum, kr) => sum + (kr.current / kr.target * 100), 0) / krs.length
+            : 0;
         
+        const card = document.createElement('div');
+        card.className = 'okr-objective';
         card.innerHTML = `
-            <div class="okr-type">四半期目標 ${index + 1}</div>
-            <div class="okr-objective">${obj.text}</div>
+            <div class="objective-header">
+                <h3 class="objective-title">${obj.text}</h3>
+                <span class="objective-status status-active">active</span>
+            </div>
             <div class="kr-list">
                 ${krs.map(kr => {
-                    const progress = Math.min((kr.current / kr.target * 100), 100);
+                    const progress = Math.min((kr.current / kr.target) * 100, 100);
                     return `
                         <div class="kr-item">
-                            <div>${kr.text}</div>
+                            <div class="kr-header">
+                                <span class="kr-title">${kr.text}</span>
+                                <span class="kr-metrics">${kr.current}/${kr.target}</span>
+                            </div>
                             <div class="kr-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${progress}%"></div>
-                                </div>
-                                <div class="progress-text">${progress.toFixed(0)}%</div>
+                                <div class="kr-progress-bar" style="width: ${progress}%"></div>
                             </div>
                         </div>
                     `;
@@ -271,9 +273,43 @@ function displayOKRCards() {
     });
 }
 
+// 統計データの更新
+function updateDashboardStats() {
+    const activeObjectives = okrData.objectives.filter(obj => obj.status !== 'completed').length;
+    const totalKRs = okrData.keyResults.length;
+    const completedKRs = okrData.keyResults.filter(kr => kr.current >= kr.target).length;
+    const completionRate = totalKRs > 0 ? Math.round((completedKRs / totalKRs) * 100) : 0;
+    
+    // 今週の進捗計算
+    const weeklyProgress = okrData.progressHistory ? 
+        okrData.progressHistory.filter(p => {
+            const date = new Date(p.date);
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return date >= weekAgo;
+        }).length : 0;
+    
+    // 残り日数計算（四半期末まで）
+    const now = new Date();
+    const quarterEnd = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3 + 3, 0);
+    const daysLeft = Math.max(0, Math.ceil((quarterEnd - now) / (24 * 60 * 60 * 1000)));
+    
+    // DOMの更新
+    const activeObjectivesEl = document.getElementById('activeObjectives');
+    const completionRateEl = document.getElementById('completionRate');
+    const weeklyProgressEl = document.getElementById('weeklyProgress');
+    const daysLeftEl = document.getElementById('daysLeft');
+    
+    if (activeObjectivesEl) activeObjectivesEl.textContent = activeObjectives;
+    if (completionRateEl) completionRateEl.textContent = `${completionRate}%`;
+    if (weeklyProgressEl) weeklyProgressEl.textContent = weeklyProgress;
+    if (daysLeftEl) daysLeftEl.textContent = daysLeft;
+}
+
 // 今日のフォーカス表示
 function displayTodaysFocus() {
     const container = document.getElementById('focusTasks');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     // 保存されたタスクがあればそれを表示、なければサンプル
@@ -297,19 +333,12 @@ function displayTodaysFocus() {
     });
 }
 
-// セクション切り替え
+// セクション切り替え (レガシー対応)
 function showSection(sectionId) {
-    // ナビゲーションのアクティブ状態更新
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    event.target.closest('.nav-item').classList.add('active');
-    
-    // セクションの表示切り替え
-    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    
-    // セクション別の初期化処理
-    if (sectionId === 'progress') {
-        displayProgressHistory();
+    // モダンナビゲーションシステムに委譲
+    const navItem = document.querySelector(`[data-section="${sectionId}"]`);
+    if (navItem) {
+        navItem.click();
     }
 }
 
