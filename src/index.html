@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OKR忘却防止ツール - 個人事業主向け</title>
+    
+    <!-- PWA メタタグ -->
+    <meta name="description" content="個人事業主・フリーランス向けのAIアシスト型OKR管理ツール">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- iOS Safari用 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="OKR Manager">
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+    
+    <!-- Android Chrome用 -->
+    <meta name="mobile-web-app-capable" content="yes">
     <style>
         * {
             margin: 0;
@@ -600,6 +614,10 @@
                 <span>🤖</span>
                 <span>AIコーチング</span>
             </div>
+            <div class="nav-item" onclick="settingsManager.showSettingsModal()">
+                <span>⚙️</span>
+                <span>設定</span>
+            </div>
         </div>
         
         <!-- メインコンテンツ -->
@@ -866,6 +884,7 @@
         </div>
     </div>
     
+    <script src="./js/settings.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

@@ -1,0 +1,52 @@
+{
+  "name": "OKR Management Tool - 個人事業主向け",
+  "short_name": "OKR Manager",
+  "description": "個人事業主・フリーランス向けのAIアシスト型OKR管理ツール",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f2f5",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "business"],
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "進捗記録",
+      "short_name": "進捗",
+      "description": "今日の進捗を記録",
+      "url": "./index.html?action=progress",
+      "icons": [
+        {
+          "src": "./assets/icons/progress.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "AIコーチング",
+      "short_name": "コーチング",
+      "description": "AIコーチングプロンプト生成",
+      "url": "./index.html?action=coaching",
+      "icons": [
+        {
+          "src": "./assets/icons/ai.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

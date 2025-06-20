@@ -1,5 +1,27 @@
 // OKR管理ツール JavaScript
 
+// Service Worker登録
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(error => console.log('SW registration failed'));
+    });
+}
+
+// モジュール読み込み（動的インポート）
+let apiService = null;
+
+async function loadModules() {
+    try {
+        const apiModule = await import('./js/api-service.js');
+        apiService = apiModule.default;
+        window.apiService = apiService;
+    } catch (error) {
+        console.warn('API Service module not loaded:', error);
+    }
+}
+
 // ローカルストレージのキー
 const STORAGE_KEYS = {
     objective: 'okr_objective',
@@ -31,12 +53,48 @@ if (!okrData.northStar) {
 let selectedMood = '';
 
 // 初期化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadModules();
     loadOKRData();
     updateDashboard();
     updateWeeklyReview();
+    setupPWAFeatures();
     setInterval(updateDashboard, 60000); // 1分ごとに更新
 });
+
+// PWA機能のセットアップ
+function setupPWAFeatures() {
+    // インストールプロンプト
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallButton();
+    });
+    
+    // インストールボタンの表示
+    function showInstallButton() {
+        const installBtn = document.createElement('button');
+        installBtn.className = 'button button-primary';
+        installBtn.textContent = '📱 アプリをインストール';
+        installBtn.onclick = () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installBtn.remove();
+                });
+            }
+        };
+        
+        // ヘッダーに追加
+        const header = document.querySelector('.dashboard-header');
+        if (header) {
+            header.appendChild(installBtn);
+        }
+    }
+}
 
 // タブ切り替え
 function showTab(tabName) {
